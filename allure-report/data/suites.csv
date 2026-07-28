@@ -1,0 +1,7 @@
+"DESCRIPTION","DURATION IN MS","NAME","PARENT SUITE","START TIME","STATUS","STOP TIME","SUB SUITE","SUITE","TEST CLASS","TEST METHOD"
+"","14984","title test","chromium","Sun Jul 19 13:01:11 IST 2026","failed","Sun Jul 19 13:01:26 IST 2026","","reporters.spec.ts","",""
+"","12262","logotest","chromium","Sun Jul 19 13:01:09 IST 2026","passed","Sun Jul 19 13:01:22 IST 2026","","reporters.spec.ts","",""
+"","40560","search test","firefox","Sun Jul 19 13:01:40 IST 2026","broken","Sun Jul 19 13:02:21 IST 2026","","reporters.spec.ts","",""
+"","40602","logotest","firefox","Sun Jul 19 13:01:38 IST 2026","broken","Sun Jul 19 13:02:19 IST 2026","","reporters.spec.ts","",""
+"","20861","title test","firefox","Sun Jul 19 13:01:39 IST 2026","failed","Sun Jul 19 13:02:00 IST 2026","","reporters.spec.ts","",""
+"","12397","search test","chromium","Sun Jul 19 13:01:10 IST 2026","passed","Sun Jul 19 13:01:23 IST 2026","","reporters.spec.ts","",""
