@@ -52,7 +52,7 @@ export default defineConfig({
     screenshot:'only-on-failure', // 'off','on','on-first-failure','only-on-failure'
     video:'retain-on-failure',//'off','on','on-first-retry','retain-on-failure','retry-with-vedio'
     /* Base URL to use in actions like `await page.goto('')`. */
-    // baseURL: 'http://localhost:3000',
+    baseURL: 'https://restful-booker.herokuapp.com',
     // viewport:{width:1280, height:720},
     /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
     trace: 'off',

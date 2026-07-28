@@ -10,12 +10,15 @@
   "type": "commonjs",
   "devDependencies": {
     "@playwright/test": "^1.60.0",
+    "@types/luxon": "^3.7.2",
     "@types/node": "^25.9.5",
     "allure-playwright": "^3.10.2"
   },
   "dependencies": {
     "@axe-core/playwright": "^4.12.1",
+    "@faker-js/faker": "^10.5.0",
     "csv-parse": "^7.0.1",
+    "luxon": "^3.7.2",
     "xlsx": "^0.18.5"
   }
 }
