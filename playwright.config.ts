@@ -20,7 +20,7 @@ export default defineConfig({
   //grep:/(?=.*@sanity)(?=.*@regression)/,
 
 
-  // timeout :60000,
+   timeout :60000,
   // expect:{timeout:10000},
 
   /* Run tests in files in parallel */

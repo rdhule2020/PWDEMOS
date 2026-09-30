@@ -11,7 +11,7 @@ import {test, expect} from "@playwright/test";
 test("Shadow DOM elements", async({page})=>{
     await page.goto("https://books-pwakit.appspot.com/");
     await page.locator('#input').fill("Playwright Automation");
-    await page.keybord.press("Enter");
+    await page.keyboard.press("Enter");
     await page.waitForTimeout(5000);
 
     const booksFound = await page.locator('h2.title').all();

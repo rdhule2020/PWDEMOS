@@ -5,14 +5,14 @@ install the csv- parse modulw to read csv file
 */
 
 import { test, expect } from '@playwright/test';
-import fs from 'fs';
+import * as fs from 'fs';
 import {parse} from 'csv-parse/sync';
 
 //Reading csv data 
 const csvPath ='testData/data.csv';
 const fileContent = fs.readFileSync(csvPath,'utf-8');
 
-const records = parse(fileContent,
+const records:any = parse(fileContent,
                     {
                         columns:true, 
                         skip_empty_lines:true
