@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import fs from 'fs';
+import * as fs from 'fs';
 
 const jsonPath = "testData/data.json";
 const loginTestData = JSON.parse(fs.readFileSync(jsonPath, 'utf-8'));

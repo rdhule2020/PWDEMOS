@@ -7,7 +7,7 @@
 */
 
 import { test, expect } from "@playwright/test";
-import fs from 'fs';
+import * as fs from 'fs';
 
 //utility function returns json file data
 function readJson(filePath: string) {

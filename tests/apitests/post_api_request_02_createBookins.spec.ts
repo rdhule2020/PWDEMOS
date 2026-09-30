@@ -5,7 +5,7 @@
  */
 
 import {test, expect} from "@playwright/test";
-import fs from "fs";
+import * as fs from "fs";
 
 test("Create Post request using JSON file",async ({request})=>{
 
