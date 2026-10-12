@@ -1,3 +1,6 @@
+/* “Open an e-commerce website and click every header menu item 
+from Fresh to Customer Service, verifying that each item is clickable.” */
+
 import { test, expect } from '@playwright/test';
 
 test('Click Amazon header items from Fresh to Customer Service', async ({ page }) => {
@@ -23,9 +26,9 @@ test('Click Amazon header items from Fresh to Customer Service', async ({ page }
       await page.waitForLoadState('domcontentloaded');
 
       // Return to Amazon home before clicking the next header.
-      await page.goto('https://www.amazon.in/', {
-        waitUntil: 'domcontentloaded',
-      });
+      // await page.goto('https://www.amazon.in/', {
+      //   waitUntil: 'domcontentloaded',
+      // });
     } else {
       console.log(`Header not found: ${header}`);
     }

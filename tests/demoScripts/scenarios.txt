@@ -1,0 +1,602 @@
+1. Amazon-style Header Navigation
+Question:
+“Open an e-commerce website and click every header menu item from Fresh to Customer Service, verifying that each item is clickable.”
+
+Tests:
+
+Locators
+
+for...of loops
+
+Assertions
+
+Handling navigation
+
+const headers = [
+  'Fresh',
+  'Amazon MiniTV',
+  'Sell',
+  'Best Sellers',
+  'Mobiles',
+  'Today\'s Deals',
+  'Customer Service'
+];
+
+for (const header of headers) {
+  await page.getByText(header, { exact: true }).click();
+  await expect(page).toHaveURL(/amazon/);
+}
+
+2. Verify All Amazon Header Items Are Visible
+Question:
+“Identify all the navigation items in the Amazon header and verify they are visible.”
+
+const menuItems = page.locator('#nav-xshop a');
+
+const count = await menuItems.count();
+
+for (let i = 0; i < count; i++) {
+  await expect(menuItems.nth(i)).toBeVisible();
+}
+
+Interview follow-up:
+“How would you make this dynamic instead of hardcoding the menu names?”
+
+3. Search Product and Verify Results
+Question:
+“Search for iPhone 15 and verify that search results are displayed.”
+
+await page.getByPlaceholder('Search Amazon.in').fill('iPhone 15');
+await page.keyboard.press('Enter');
+
+await expect(page).toHaveURL(/iPhone/);
+await expect(page.locator('[data-component-type="s-search-result"]').first())
+  .toBeVisible();
+
+4. Select Product From Search Results
+Question:
+“Search for a product and click the first product from the search results.”
+
+Tests:
+
+Dynamic locators
+
+Collections
+
+.first()
+
+await page.getByPlaceholder('Search Amazon.in').fill('laptop');
+await page.keyboard.press('Enter');
+
+const products = page.locator('[data-component-type="s-search-result"]');
+
+await expect(products.first()).toBeVisible();
+await products.first().click();
+
+5. Add Product to Cart
+Question:
+“Search for a product, open it, add it to cart, and verify the cart count.”
+
+await page.getByPlaceholder('Search Amazon.in').fill('headphones');
+await page.keyboard.press('Enter');
+
+await page.locator('[data-component-type="s-search-result"]').first().click();
+
+await page.getByRole('button', { name: /Add to Cart/i }).click();
+
+await expect(page.locator('#nav-cart-count')).toHaveText(/\d+/);
+
+6. Handle Amazon Account Dropdown
+Question:
+“Hover over Account & Lists and verify that the dropdown options are displayed.”
+
+await page.getByText(/Account & Lists/i).hover();
+
+await expect(
+  page.getByText('Your Orders')
+).toBeVisible();
+
+Follow-up:
+“What is the difference between hover() and click()?”
+
+7. Automate a Dropdown
+Question:
+“Select Electronics from a category dropdown.”
+
+await page.locator('#searchDropdownBox').selectOption({
+  label: 'Electronics'
+});
+
+Follow-up:
+“Can you select by value instead of label?”
+
+8. Verify All Dropdown Values
+Question:
+“Print all values available in the Amazon category dropdown.”
+
+const options = page.locator('#searchDropdownBox option');
+
+const count = await options.count();
+
+for (let i = 0; i < count; i++) {
+  console.log(await options.nth(i).textContent());
+}
+
+9. Handle Multiple Tabs
+Question:
+“Click a link that opens a new tab and verify the title of the new page.”
+
+const [newPage] = await Promise.all([
+  context.waitForEvent('page'),
+  page.getByRole('link', { name: 'Some Link' }).click()
+]);
+
+await newPage.waitForLoadState();
+
+console.log(await newPage.title());
+
+This is very commonly asked.
+
+10. Handle Multiple Windows
+Question:
+“Open a new window, switch to it, perform an action, and return to the original page.”
+
+const [newPage] = await Promise.all([
+  context.waitForEvent('page'),
+  page.getByText('Open Window').click()
+]);
+
+await newPage.bringToFront();
+
+await expect(newPage).toHaveTitle(/Example/);
+
+await page.bringToFront();
+
+11. Handle JavaScript Alert
+Question:
+“Click a button that generates an alert and verify the alert message.”
+
+page.on('dialog', async dialog => {
+  expect(dialog.message()).toBe('Are you sure?');
+  await dialog.accept();
+});
+
+await page.getByRole('button', { name: 'Delete' }).click();
+
+12. Handle Confirmation Popup
+Question:
+“Click Delete and dismiss the confirmation popup.”
+
+page.on('dialog', async dialog => {
+  await dialog.dismiss();
+});
+
+await page.getByRole('button', { name: 'Delete' }).click();
+
+13. Handle iframe
+Question:
+“Enter username and password inside an iframe.”
+
+const frame = page.frameLocator('#login-frame');
+
+await frame.getByLabel('Username').fill('testuser');
+await frame.getByLabel('Password').fill('password');
+
+Very important interview topic:
+page.frameLocator() vs page.frames().
+
+14. Verify Broken Links
+Question:
+“Find all links on the page and identify broken links.”
+
+This is a great coding-round question.
+
+const links = page.locator('a');
+const count = await links.count();
+
+for (let i = 0; i < count; i++) {
+  const href = await links.nth(i).getAttribute('href');
+
+  if (href) {
+    console.log(href);
+  }
+}
+
+For actual HTTP validation, combine Playwright with the API request context.
+
+15. Verify All Images Are Loaded
+Question:
+“Verify that all images on the page are loaded.”
+
+const images = page.locator('img');
+
+const count = await images.count();
+
+for (let i = 0; i < count; i++) {
+  await expect(images.nth(i)).toHaveJSProperty('complete', true);
+}
+
+16. Dynamic Web Table
+Question:
+“Find the employee whose name is John and print his salary.”
+
+const row = page.locator('tr').filter({ hasText: 'John' });
+
+const salary = await row.locator('td').nth(3).textContent();
+
+console.log(salary);
+
+Follow-up:
+“What if the column position changes?”
+
+A strong answer is to locate the column based on the table header rather than hardcoding nth(3).
+
+17. Select a Checkbox Dynamically
+Question:
+“Select all checkboxes whose labels contain Mobile.”
+
+const checkboxes = page.getByRole('checkbox');
+
+const count = await checkboxes.count();
+
+for (let i = 0; i < count; i++) {
+  const label = await checkboxes.nth(i).getAttribute('aria-label');
+
+  if (label?.includes('Mobile')) {
+    await checkboxes.nth(i).check();
+  }
+}
+
+18. Select All Checkboxes
+Question:
+“Select all available checkboxes.”
+
+const checkboxes = page.getByRole('checkbox');
+
+for (let i = 0; i < await checkboxes.count(); i++) {
+  await checkboxes.nth(i).check();
+}
+
+Follow-up:
+“How would you uncheck all of them?”
+
+await checkboxes.nth(i).uncheck();
+
+19. Verify Sorting
+Question:
+“Sort products by price and verify that prices are in ascending order.”
+
+Conceptually:
+
+const prices = await page.locator('.product-price').allTextContents();
+
+const numericPrices = prices.map(price =>
+  Number(price.replace(/[₹,]/g, ''))
+);
+
+const sortedPrices = [...numericPrices].sort((a, b) => a - b);
+
+expect(numericPrices).toEqual(sortedPrices);
+
+This is an excellent interview coding problem because it combines Playwright + TypeScript + JavaScript.
+
+20. Date Picker
+Question:
+“Select 25 December 2026 from a date picker.”
+
+Typical approach:
+
+await page.getByRole('button', { name: /date/i }).click();
+
+while (!(await page.getByText('December 2026').isVisible())) {
+  await page.getByRole('button', { name: /next/i }).click();
+}
+
+await page.getByText('25', { exact: true }).click();
+
+Interviewers may intentionally make the date dynamic.
+
+21. Auto-Suggest Search
+Question:
+“Enter iph in the search box and select iPhone 15 from auto-suggestions.”
+
+await page.getByPlaceholder('Search').fill('iph');
+
+const suggestions = page.locator('.suggestion');
+
+await expect(suggestions).toContainText('iPhone 15');
+
+await page.getByText('iPhone 15', { exact: true }).click();
+
+22. Mouse Actions
+Question:
+“Right-click an element.”
+
+await page.locator('#element').click({
+  button: 'right'
+});
+
+Double click:
+
+await page.locator('#element').dblclick();
+
+Hover:
+
+await page.locator('#element').hover();
+
+23. Drag and Drop
+Question:
+“Drag an item from one container to another.”
+
+await page.locator('#source').dragTo(
+  page.locator('#target')
+);
+
+Very common Playwright-specific question.
+
+24. Upload a File
+Question:
+“Upload a PDF file.”
+
+await page
+  .locator('input[type="file"]')
+  .setInputFiles('tests/test-data/sample.pdf');
+
+25. Download a File
+Question:
+“Click Download and verify that a file was downloaded.”
+
+const downloadPromise = page.waitForEvent('download');
+
+await page.getByText('Download').click();
+
+const download = await downloadPromise;
+
+console.log(await download.suggestedFilename());
+
+26. Verify Downloaded File
+const download = await downloadPromise;
+
+const path = await download.path();
+
+expect(path).not.toBeNull();
+
+27. Screenshot on Failure
+Question:
+“How do you capture screenshots when a test fails?”
+
+In Playwright configuration:
+
+use: {
+  screenshot: 'only-on-failure'
+}
+
+28. API + UI Combination
+Question:
+“Create a user using API and verify that the user appears in the UI.”
+
+const response = await request.post('/users', {
+  data: {
+    name: 'John',
+    email: 'john@test.com'
+  }
+});
+
+expect(response.ok()).toBeTruthy();
+
+await page.goto('/users');
+
+await expect(page.getByText('John')).toBeVisible();
+
+This is becoming an increasingly useful Playwright interview scenario.
+
+29. Network Request Validation
+Question:
+“Click Search and verify that the expected API request is sent.”
+
+const responsePromise = page.waitForResponse(
+  response =>
+    response.url().includes('/search') &&
+    response.request().method() === 'GET'
+);
+
+await page.getByRole('button', { name: 'Search' }).click();
+
+const response = await responsePromise;
+
+expect(response.status()).toBe(200);
+
+30. Mock an API Response
+Question:
+“Intercept the product API and return mocked data.”
+
+await page.route('**/api/products', async route => {
+  await route.fulfill({
+    status: 200,
+    contentType: 'application/json',
+    body: JSON.stringify({
+      products: [
+        { id: 1, name: 'iPhone 15' }
+      ]
+    })
+  });
+});
+
+await page.goto('/products');
+
+31. Verify Login
+Question:
+“Automate login and verify that the user is logged in.”
+
+await page.getByLabel('Email').fill('test@test.com');
+await page.getByLabel('Password').fill('Password123');
+
+await page.getByRole('button', { name: 'Login' }).click();
+
+await expect(
+  page.getByText('Logout')
+).toBeVisible();
+
+32. Login Once and Reuse Session
+Question:
+“How would you avoid logging in before every test?”
+
+Use Playwright's storage state.
+
+await context.storageState({
+  path: 'auth.json'
+});
+
+Then configure:
+
+use: {
+  storageState: 'auth.json'
+}
+
+33. Parameterized Test
+Question:
+“Run the same test for multiple products.”
+
+const products = ['iPhone 15', 'MacBook', 'AirPods'];
+
+for (const product of products) {
+  test(`Search ${product}`, async ({ page }) => {
+    await page.getByPlaceholder('Search').fill(product);
+    await page.keyboard.press('Enter');
+
+    await expect(page).toHaveTitle(/Search/);
+  });
+}
+
+34. Data-Driven Testing
+Question:
+“Run login test for multiple users.”
+
+const users = [
+  { username: 'user1', password: 'pass1' },
+  { username: 'user2', password: 'pass2' },
+  { username: 'user3', password: 'pass3' }
+];
+
+for (const user of users) {
+  test(`Login - ${user.username}`, async ({ page }) => {
+    await page.getByLabel('Username').fill(user.username);
+    await page.getByLabel('Password').fill(user.password);
+    await page.getByRole('button', { name: 'Login' }).click();
+  });
+}
+
+35. Page Object Model
+Question:
+“Convert the login test into Page Object Model.”
+
+export class LoginPage {
+  constructor(private page: Page) {}
+
+  username = this.page.getByLabel('Username');
+  password = this.page.getByLabel('Password');
+  loginButton = this.page.getByRole('button', { name: 'Login' });
+
+  async login(username: string, password: string) {
+    await this.username.fill(username);
+    await this.password.fill(password);
+    await this.loginButton.click();
+  }
+}
+
+36. Dynamic Locator Challenge
+Question:
+“Click the product whose name is iPhone 15 Pro Max.”
+
+Instead of:
+
+page.locator('.product').nth(4).click();
+
+Prefer:
+
+await page
+  .locator('.product')
+  .filter({ hasText: 'iPhone 15 Pro Max' })
+  .click();
+
+This tests whether you understand stable/dynamic locators.
+
+37. Verify Element Count
+Question:
+“Verify that the page displays exactly 20 products.”
+
+await expect(
+  page.locator('.product')
+).toHaveCount(20);
+
+38. Check Every Product Has a Price
+Question:
+“Find all products and verify every product has a price.”
+
+const products = page.locator('.product');
+
+for (let i = 0; i < await products.count(); i++) {
+  await expect(
+    products.nth(i).locator('.price')
+  ).toBeVisible();
+}
+
+39. Scroll and Click
+Question:
+“Find an element at the bottom of the page and click it.”
+
+Usually Playwright handles scrolling automatically:
+
+await page.getByText('Customer Service').click();
+
+You can explicitly scroll when needed:
+
+await page.getByText('Customer Service').scrollIntoViewIfNeeded();
+await page.getByText('Customer Service').click();
+
+40. The Classic Interview Challenge
+A very realistic combined question is:
+
+“Open Amazon. Get all header menu items from Fresh through Customer Service. Iterate through them, click each one, verify the expected page/URL, and return to the homepage before clicking the next item.”
+
+A clean approach:
+
+const menuItems = [
+  'Fresh',
+  'Amazon MiniTV',
+  'Sell',
+  'Best Sellers',
+  'Mobiles',
+  'Today\'s Deals',
+  'Customer Service'
+];
+
+for (const item of menuItems) {
+  await page.getByText(item, { exact: true }).click();
+
+  // Verify navigation
+  await expect(page).toHaveURL(/amazon/);
+
+  // Return to home
+  await page.goto('https://www.amazon.in/');
+}
+
+But an experienced interviewer may intentionally reject this solution and ask:
+
+“Why are you hardcoding the menu names?”
+
+Then you'd improve it by reading the menu elements dynamically from the DOM:
+
+const menuItems = page.locator('#nav-xshop a');
+
+const count = await menuItems.count();
+
+for (let i = 0; i < count; i++) {
+  const item = menuItems.nth(i);
+
+  console.log(await item.innerText());
+
+  await item.click();
+
+  await page.goBack();
+}
